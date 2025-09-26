@@ -1,21 +1,16 @@
+import collections
 import pickle
 import random
 
 import torchvision
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize, RandomResizedCrop, \
-    InterpolationMode
-from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler, UNet2DConditionModel, EulerDiscreteScheduler
-from huggingface_hub import hf_hub_download
-from safetensors.torch import load_file
 from torch.multiprocessing import Process, Queue
+from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, RandomResizedCrop, \
+    InterpolationMode
 from tqdm import tqdm
-from transformers import CLIPProcessor, CLIPModel
 
 from nets.GA import GA
-from nets.sdxl_turbo import StableDiffusionXLPipeline
-from utils import *
-import collections
 from training_args import parse_args
+from utils import *
 
 
 def freeze_BN(model):
@@ -426,8 +421,11 @@ def prepare_data(args):
         val_lines = f.readlines()
     with open(args.test_annotation_path, encoding='utf-8') as f:
         test_lines = f.readlines()
-    with open(args.train_annotation_path, encoding='utf-8') as f:
-        train_lines = f.readlines()
+    try:
+        with open(args.train_annotation_path, encoding='utf-8') as f:
+            train_lines = f.readlines()
+    except:
+        train_lines=None
     np.random.seed(10101)
     np.random.shuffle(val_lines)
     np.random.seed(None)

@@ -1,21 +1,16 @@
+import collections
 import pickle
 import random
 
 import torchvision
-from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize, RandomResizedCrop, \
-    InterpolationMode
-from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler, UNet2DConditionModel, EulerDiscreteScheduler
-from huggingface_hub import hf_hub_download
-from safetensors.torch import load_file
 from torch.multiprocessing import Process, Queue
+from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, RandomResizedCrop, \
+    InterpolationMode
 from tqdm import tqdm
-from transformers import CLIPProcessor, CLIPModel
 
 from nets.GA import GA
-from nets.sdxl_turbo import StableDiffusionXLPipeline
-from utils import *
-import collections
 from training_args import parse_args
+from utils import *
 
 
 def freeze_BN(model):
@@ -113,11 +108,11 @@ def get_dataloader(dataloader, is_train, args, device, image_encoder=None, with_
             feature_dataset = FeatureDataset(image_encoder, dataloader, device)
             new_dataloader = torch.utils.data.DataLoader(feature_dataset, batch_size=args.inner_batch_size,
                                                          shuffle=is_train)
-        length=len(feature_dataset)
+        length = len(feature_dataset)
     else:
         new_dataloader = dataloader
-        length=None
-    return new_dataloader,length
+        length = None
+    return new_dataloader, length
 
 
 def index_to_input(curriculum, classes, prompt_nums_per_class, num_classes):
@@ -265,20 +260,20 @@ def gpu_worker(gpu_id, input_queue, output_queue, completion_queue, learner_samp
         **learner_sampler_args
     )
     learner_sampler.interval = [8, 15]
-    
+
     learner = learner_sampler.sample_learner(args.img_shape, device, learner_type=args.learner_type,
                                              model_path=args.model_path, num_classes=args.num_classes)
-    
+
     if learner.feature_net is not None:
         meta_batch = math.ceil(meta_x.shape[0] / args.split)
         learner.feature_net.to(device)
-        m_x=[]
+        m_x = []
         with torch.no_grad():
             for i in range(0, meta_x.shape[0], meta_batch):
                 batch_meta_x = meta_x[i:i + meta_batch]
                 batch_meta_x = learner.feature_net(batch_meta_x)
                 m_x.append(batch_meta_x)
-        meta_x=torch.cat(m_x)
+        meta_x = torch.cat(m_x)
     del learner
     while True:
         inputs = input_queue.get()
@@ -320,12 +315,13 @@ def compute_learner(device, learner, curriculum, args, generate_num=None, callba
     learner_data = torch.utils.data.DataLoader(learner_dataset, batch_size=args.inner_batch_size, shuffle=True,
                                                num_workers=4)
     if args.use_real_img:
-        learner_data,length = get_dataloader(learner_data, True, args, device, learner.feature_net, True, args.syn_path)
+        learner_data, length = get_dataloader(learner_data, True, args, device, learner.feature_net, True,
+                                              args.syn_path)
     else:
-        learner_data,length = get_dataloader(learner_data, True, args, device, learner.feature_net)
+        learner_data, length = get_dataloader(learner_data, True, args, device, learner.feature_net)
     pbar = tqdm(total=args.epoches, desc="{} training epoch".format(device), postfix=dict, mininterval=0.3)
     if length is None:
-        length=len(learner_dataset)
+        length = len(learner_dataset)
     for epoch in range(epoches):
         # if epoch == 25:
         #    learner.model.Unfreeze_backbone()
@@ -390,7 +386,7 @@ def eval_fun(device, curriculum, learner_sampler, meta_x, meta_y, args, return_l
         for i in range(0, meta_y.shape[0], meta_batch):
             batch_meta_x = meta_x[i:i + meta_batch]
             batch_meta_y = meta_y[i:i + meta_batch]
-            #if learner.feature_net is not None:
+            # if learner.feature_net is not None:
             #    batch_meta_x = learner.feature_net(batch_meta_x)
             pred = learner.model(batch_meta_x).detach()
             m_loss = nn.CrossEntropyLoss()(pred, batch_meta_y)
@@ -421,8 +417,8 @@ def eval_fun(device, curriculum, learner_sampler, meta_x, meta_y, args, return_l
     # tlogger.info("optimizer", type(learner.optimizer).__name__)
     tlogger.info('meta_training_loss', meta_loss)
     tlogger.info('meta_training_accuracy', accuracy.item())
-    #tlogger.info('training_accuracies', intermediate_accuracies)
-    #tlogger.info('training_losses', intermediate_losses)
+    # tlogger.info('training_accuracies', intermediate_accuracies)
+    # tlogger.info('training_losses', intermediate_losses)
     if return_learner:
         return meta_loss, learner
     else:
@@ -574,9 +570,9 @@ def main(args):
         if learned_dict is not None:
             init_X = learned_dict.get("best_x", None)
             Chrom = learned_dict.get("Chrom", None)
-            #initial=np.random.randint(0,10,size=(20,len(init_X)))
+            # initial=np.random.randint(0,10,size=(20,len(init_X)))
             init_X = np.array([init_X])
-            #init_X=np.concatenate((init_X,initial),axis=0)
+            # init_X=np.concatenate((init_X,initial),axis=0)
         else:
             init_X = None
             Chrom = None

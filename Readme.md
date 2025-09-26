@@ -6,7 +6,7 @@ This repository contains a **PyTorch implementation** of
 ---
 
 ## Installation
-```
+```sh
 conda create -n DeCap python=3.10
 conda activate DeCap
 pip install -r requirements.txt
@@ -44,12 +44,21 @@ bash prepare/prepare.sh
 To accelerate training, we need to first generate synthetic dataset about the full prompt pool.
 
 ```bash
-python generate.py full cifar10 4 10 None
+python generate.py full cifar10 10 10 None
 ```
 3. **Start training**
 
 ```bash
-python GA_train.py
+python GA_train.py  \
+      --per_gpu_popsize=10 \
+      --prompt_nums_per_class=20 \
+      --dataset=cifar10 \
+      --test_annotation_path="./dataset/cifar10/cls_test.txt"  \
+      --val_annotation_path="./dataset/cifar10/cls_val.txt" \
+      --label_path="./dataset/cifar10/cls_classes.txt"  \
+      --root_dir="./syn_dataset/cifar10/full" \
+      --save_dir="./result"  \
+      --pool_path="./prompt_pool/cifar10_prompt_pool.pkl"
 ```
 
 ---
