@@ -151,10 +151,10 @@ def main(method, dataset, generate_num, batch_size=20, learned_path=None):
 
 
 if __name__ == "__main__":
-    method = sys.argv[0]
-    dataset = sys.argv[1]
-    generate_num = int(sys.argv[2])
-    batch_size = int(sys.argv[3])
-    learned_path = sys.argv[4]
+    method = sys.argv[1]
+    dataset = sys.argv[2]
+    generate_num = int(sys.argv[3])
+    batch_size = int(sys.argv[4])
+    learned_path = sys.argv[5]
     main(method, dataset, generate_num, batch_size, learned_path)
     # python generate.py ours cifar10 20 10 /path/to/prompt_dict.pkl

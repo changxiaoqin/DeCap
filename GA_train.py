@@ -447,22 +447,9 @@ def prepare_data(args):
 
 
 def get_label_list(args):
-    if args.dataset == 'cifar10':
-        label_list = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-    elif args.dataset == 'stl10':
-        label_list = ['airplane', 'bird', 'car', 'cat', 'deer', 'dog', 'horse', 'monkey', 'ship', 'truck']
-    elif args.dataset == 'animal10':
-        label_list = ['butterfly', 'cat', 'chicken', 'cow', 'dog', 'elephant', 'horse', 'sheep', 'spider', 'squirrel']
-    elif args.dataset == 'imagenette':
-        label_list = ['tench', 'English springer', 'cassette player', 'chain saw', 'church', 'French horn',
-                      'garbage truck', 'gas pump', 'golf ball', 'parachute']
-    elif args.dataset == 'imagewoof':
-        label_list = ['Shih-Tzu', 'Rhodesian ridgeback', 'beagle', 'English foxhound', 'Border terrier',
-                      'Australian terrier', 'golden retriever', 'Old English sheepdog', 'Samoyed', 'dingo']
-    else:
-        label_path = args.label_path
-        with open(label_path, 'r') as file:
-            label_list = [line.strip().replace("_", " ") for line in file]
+    label_path = args.label_path
+    with open(label_path, 'r') as file:
+        label_list = [line.strip().replace("_", " ") for line in file]
     return label_list
 
 

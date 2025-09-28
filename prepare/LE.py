@@ -3,7 +3,7 @@ import random
 import sys
 from keytotext import pipeline
 
-nlp = pipeline("mrm8488/t5-base-finetuned-common_gen", use_cuda=True)
+nlp = pipeline.pipeline("mrm8488/t5-base-finetuned-common_gen", use_cuda=True)
 
 
 def word2sentence(classnames, num=200, save_path=''):
@@ -30,8 +30,8 @@ def word2sentence(classnames, num=200, save_path=''):
 
 
 if __name__ == "__main__":
-    num = sys.argv[0]
-    dataset = sys.argv[1]
+    num = sys.argv[1]
+    dataset = sys.argv[2]
     save_path = "./generated_prompt/{}_data_text.pkl".format(dataset)
     label_path = './dataset/{}/cls_classes.txt'.format(dataset)
     with open(label_path, 'r') as file:

@@ -108,7 +108,7 @@ def get_prompt(length, Blip, data, processor, device="cuda"):
     return prompt
 
 
-dataset = sys.argv[0]
+dataset = sys.argv[1]
 model_id = "Salesforce/blip-image-captioning-base"
 meta_data_path = './dataset/{}/cls_val.txt'.format(dataset)
 label_path = './dataset/{}/cls_classes.txt'.format(dataset)
@@ -125,13 +125,10 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=len(train_d
 train_x, train_y = next(iter(train_loader))
 
 prompt = get_prompt(len(train_dataset), BLIP, train_x, processor)
-print(prompt)
-print(len(prompt[0]))
 
 prompt_dict = {i: [] for i in label_list}
 for i in range(train_y.shape[0]):
     prompt_dict[label_list[int(train_y[i])]].append(label_list[int(train_y[i])] + ", " + prompt[i])
-print(prompt_dict)
 r = open(save_path, "wb")
 pickle.dump(prompt_dict, r)
 r.close()

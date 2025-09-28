@@ -1,7 +1,7 @@
 import os
 import sys
 
-dataset = sys.argv[0]
+dataset = sys.argv[1]
 
 
 def get_classes(classes_path):

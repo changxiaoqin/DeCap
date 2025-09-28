@@ -1,6 +1,6 @@
 # Diversity-Enhanced and Classification-Aware Prompt Learning for Few-Shot Learning via Stable Diffusion
 
-This repository contains a **PyTorch implementation** of  
+This repository contains the implementation of  
 **Diversity-Enhanced and Classification-Aware Prompt Learning for Few-Shot Learning via Stable Diffusion**.  
 
 ---
@@ -9,6 +9,7 @@ This repository contains a **PyTorch implementation** of
 ```sh
 conda create -n DeCap python=3.10
 conda activate DeCap
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia
 pip install -r requirements.txt
 ```
 ##  Dataset Construction
@@ -29,6 +30,8 @@ dataset/
     └── val/
     └── test/
 ```
+
+We only use "val" set to generate image caption prompt and to train DeCap.
 
 ---
 
@@ -70,6 +73,13 @@ After training, generate a dataset with:
 ```bash
 python generate.py ours cifar10 20 10 /path/to/prompt_dict.pkl
 ```
-
+You can cite this paper by:
+```
+@inproceedings{chang2025decap,
+	title={Diversity-Enhanced and Classification-Aware Prompt Learning for Few-Shot Learning via Stable Diffusion},
+	author={Chang, Gaoqin and Shu, Jun and Yuan, Xiang and Meng, Deyu},
+	booktitle={TMLR},
+	year=2025}
+```
 ---
 

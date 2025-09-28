@@ -66,34 +66,30 @@ hand_prompt = ['a good photo of the {}.', 'a photo of many {}.', 'a sculpture of
                'A high-contrast {}.', 'A sepia-toned {}.', 'A saturated {}.', 'An isolated {}.', 'A mirrored {}.',
                'A panoramic view of {}.', 'An enchanted {}.']
 
-dataset = sys.argv[0]
+dataset = sys.argv[1]
 
 blip_text_path = './generated_prompt/{}_blip_text.pkl'.format(dataset)
 llm_text_path = "./generated_prompt/{}_data_text.pkl".format(dataset)
-label_path = './dataset/{}/cls_classes.txt'
+label_path = './dataset/{}/cls_classes.txt'.format(dataset)
 save_dir = './prompt_pool'
 blip_prompt = maybe_merge(blip_text_path)
 llm_prompt = maybe_merge(llm_text_path)
 keys_ = list(blip_prompt.keys())
 keys = list(llm_prompt.keys())
-print(len(keys_), len(keys))
 label_list = get_label_list(label_path)
-print(len(label_list))
 # prompt_dict = {label: blip_prompt[label] + llm_prompt[label] for label in label_list}
 prompt_dict = {}
 lens = []
 for i, label in enumerate(label_list):
     # class_prompt = blip_prompt[label] + llm_prompt[label]
-    class_prompt = blip_prompt[keys_[i]] + llm_prompt[keys[i]][:19]
+    class_prompt = blip_prompt[keys_[i]] + llm_prompt[keys[i]]
     pool_prompt = [prompt.format(label) for prompt in hand_prompt]
     # prompt_dict[label] = pool_prompt + class_prompt
     prompt_dict[label] = class_prompt + pool_prompt
     # prompt_dict[label] = blip_prompt[keys_[i]] + llm_prompt[keys[i]]
-    if i == 0:
-        print(len(class_prompt), len(llm_prompt[keys[i]]))
     lens.append(len(class_prompt) + len(pool_prompt))
 min_len = min(lens)
-print(min_len)
+print("pool size:", min_len)
 pool = {}
 for k, v in prompt_dict.items():
     pool[k] = v[:min_len]

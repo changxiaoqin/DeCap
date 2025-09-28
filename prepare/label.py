@@ -2,12 +2,13 @@ import os
 from PIL import Image
 import sys
 
-dataset = sys.argv[0]
-image_folder = './dataset/{}'.format(dataset)
+dataset = sys.argv[1]
+print(dataset)
+image_folder = './dataset/{}/test'.format(dataset)
 file_names = os.listdir(image_folder)
 print(file_names)
 
-txt_file = './dataset/{}/cls_classes.txt'
+txt_file = './dataset/{}/cls_classes.txt'.format(dataset)
 print("begin")
 
 with open(txt_file, 'w') as f:
